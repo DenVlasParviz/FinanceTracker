@@ -3,10 +3,9 @@ export interface Category {
   name: string;
   checked: boolean;
   level: number;
-  budgeted: number;
+  assigned: number;
   activity: number;
   available: number;
   isParent?: boolean;
   parentId?: string;
-
 }

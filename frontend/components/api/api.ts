@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/categories",
@@ -6,6 +6,13 @@ const api = axios.create({
 });
 
 export const getCategoriesTable = async () => {
-  const response = await api.get('/');
+  const response = await api.get("/");
   return response.data;
-}
+};
+export const updateCategory = async (
+  id: string,
+  data: { name?: string; assigned?: number },
+) => {
+  const response = await api.patch(`/${id}`, data);
+  return response.data;
+};

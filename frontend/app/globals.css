@@ -41,16 +41,15 @@ body {
     text-ellipsis
     text-center;
 }
-.breakdown-activity{
-    @apply flex items-center justify-between
+.breakdown-activity {
+  @apply flex items-center justify-between;
 }
-.breakdown-leftover-prev-month{
-    @apply flex items-center justify-between
+.breakdown-leftover-prev-month {
+  @apply flex items-center justify-between;
 }
-.breakdown-assigned-in-moth{
-    @apply flex items-center justify-between
+.breakdown-assigned-in-moth {
+  @apply flex items-center justify-between;
 }
-.breakdown-available{
-    @apply flex items-center justify-between
-
+.breakdown-available {
+  @apply flex items-center justify-between;
 }

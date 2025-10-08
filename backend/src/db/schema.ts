@@ -11,7 +11,7 @@ export const categoriesTable = pgTable("categories",{
   name:text("name").notNull(),
   checked:boolean("checked").default(false),
   level:integer("level").notNull(),
-  budgeted:integer("budgeted").default(0),
+  assigned:integer("budgeted").default(0),
   activity:integer("activity").default(0),
   available:integer("available").default(0),
   isParent:boolean("isParent").default(false),

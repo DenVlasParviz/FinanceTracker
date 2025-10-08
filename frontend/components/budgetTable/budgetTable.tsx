@@ -13,8 +13,32 @@ export default function BudgetTable() {
       try {
         const cats: Category[] = await getCategoriesTable();
 
-        setCategories(cats);
-        setExpandedIds(cats.filter(c => c.isParent).map(c => c.id));
+        // 1. Разделяем на родителей и детей
+        const parents = cats.filter(c => c.parentId === null);
+        const children = cats.filter(c => c.parentId !== null);
+
+        // 2. Сортируем родителей по ID
+        parents.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+        // 3. Создаём правильный порядок: родитель -> его дети
+        const sorted: Category[] = [];
+
+        parents.forEach(parent => {
+          // Добавляем родителя
+          sorted.push(parent);
+
+          // Добавляем всех его детей (отсортированных по ID)
+          const parentChildren = children
+            .filter(child => child.parentId === parent.id)
+            .sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+          sorted.push(...parentChildren);
+        });
+
+
+
+        setCategories(sorted);
+        setExpandedIds(sorted.filter((c) => c.isParent).map((c) => c.id));
       } catch (err) {
         console.error(err);
       }
@@ -36,8 +60,6 @@ export default function BudgetTable() {
       setExpandedIds([...expandedIds, id]);
     }
   };
-
-
 
   if (categories.length === 0) {
     return <div className="p-4 text-gray-500">Loading...</div>;
@@ -65,7 +87,6 @@ export default function BudgetTable() {
             category.isParent ||
             (category.parentId && expandedIds.includes(category.parentId));
 
-
           if (!shouldShow) return null;
 
           return (
@@ -74,7 +95,9 @@ export default function BudgetTable() {
               category={category}
               isExpanded={isExpanded}
               onToggleExpand={
-                category.isParent ? () => toggleCategory(category.id) : undefined
+                category.isParent
+                  ? () => toggleCategory(category.id)
+                  : undefined
               }
               onToggleCheck={() => toggleCheckbox(category.id)}
             />
