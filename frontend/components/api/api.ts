@@ -16,3 +16,13 @@ export const updateCategory = async (
   const response = await api.patch(`/${id}`, data);
   return response.data;
 };
+
+export const getTargetsTable = async () => {
+
+  const response = await api.get("/targets");
+
+}
+export const addTargetsTable = async () => {
+
+}
+
