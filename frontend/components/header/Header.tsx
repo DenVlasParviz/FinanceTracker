@@ -10,7 +10,7 @@ export const Header = () => {
       <div className="flex-1 flex justify-center">
         <BudgetStatus />
       </div>
-      <div className="flex-1"></div> {/* пустое пространство для симметрии */}
+      <div className="flex-1"></div>
     </div>
   );
 };

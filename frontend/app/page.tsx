@@ -5,9 +5,11 @@ import BudgetTable from "@/components/budgetTable/budgetTable";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { Summary } from "@/components/summaryPanel/summary";
 import { useState } from "react";
+import { Category } from "@/types/category";
 
 export default function Home() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   return (
     <div className="flex h-screen">
       <Sidebar
@@ -23,9 +25,9 @@ export default function Home() {
         <FilterButtons />
         <div className="flex flex-1">
           <div className="flex-1 overflow-y-auto transition-all duration-300">
-            <BudgetTable />
+            <BudgetTable onSelectCategory={setSelectedCategory} />
           </div>
-          <Summary />
+          <Summary  selectedCategory={selectedCategory} />
         </div>
       </div>
     </div>

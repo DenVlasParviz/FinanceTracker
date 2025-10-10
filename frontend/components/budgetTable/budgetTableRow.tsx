@@ -8,11 +8,14 @@ export const BudgetTableRow = ({
   isExpanded,
   onToggleExpand,
   onToggleCheck,
+                                 onSelectCategory
+
 }: {
   category: Category;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
   onToggleCheck?: () => void;
+  onSelectCategory?: (category: Category) => void;
 }) => {
   /*  const isParent = category.isParent;
       const isChild = category.level === 2;*/
@@ -32,7 +35,7 @@ export const BudgetTableRow = ({
   }, [category.name, category.assigned]);
 
   const startEdit = (field: typeof editingField) => {
-    if (field === "assigned" && !isChild) return; // <----- allow assigned editing only for child
+    if (field === "assigned" && !isChild) return; // <- allow assigned editing only for child
     setEditingField(field);
   };
   const cancelEdit = () => {
@@ -76,6 +79,7 @@ export const BudgetTableRow = ({
       style={{ minHeight: "44px" }}
       role="row"
       aria-level={category.level}
+      onClick={()=> onSelectCategory?.(category)}
     >
       {/*Collapse button*/}
       <div className="w-6 mr-2 ">
@@ -149,7 +153,7 @@ export const BudgetTableRow = ({
         ) : (
           <button
             onClick={() => startEdit("assigned")}
-            disabled={!isChild} // <------- ДОБАВИЛ: только дочерние могут редактировать
+            disabled={!isChild}
             className={`
               w-full px-2 py-1 text-sm rounded text-right font-mono
               ${isChild ? "hover:bg-blue-50 text-gray-600 cursor-pointer" : "text-gray-400 cursor-not-allowed"}

@@ -4,30 +4,29 @@ import { Category } from "@/types/category";
 import { useEffect, useState } from "react";
 import { getCategoriesTable } from "@/components/api/api";
 
-export default function BudgetTable() {
+interface BudgetTableProps {
+  onSelectCategory?: (cat: Category) => void;
+}
+export default function BudgetTable({onSelectCategory}: BudgetTableProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
         const cats: Category[] = await getCategoriesTable();
 
-        // 1. Разделяем на родителей и детей
         const parents = cats.filter(c => c.parentId === null);
         const children = cats.filter(c => c.parentId !== null);
 
-        // 2. Сортируем родителей по ID
         parents.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-        // 3. Создаём правильный порядок: родитель -> его дети
         const sorted: Category[] = [];
 
         parents.forEach(parent => {
-          // Добавляем родителя
           sorted.push(parent);
 
-          // Добавляем всех его детей (отсортированных по ID)
           const parentChildren = children
             .filter(child => child.parentId === parent.id)
             .sort((a, b) => parseInt(a.id) - parseInt(b.id));
@@ -52,6 +51,7 @@ export default function BudgetTable() {
       ),
     );
   };
+
 
   const toggleCategory = (id: string) => {
     if (expandedIds.includes(id)) {
@@ -100,6 +100,7 @@ export default function BudgetTable() {
                   : undefined
               }
               onToggleCheck={() => toggleCheckbox(category.id)}
+              onSelectCategory={onSelectCategory}
             />
           );
         })}

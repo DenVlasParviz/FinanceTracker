@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { Category } from "@/types/category";
+import { TargetInspector } from "@/components/summaryPanel/targetInspector";
 
 interface SummaryData {
   leftOver: number;
@@ -9,7 +11,10 @@ interface SummaryData {
   targetAmount: number;
 }
 
-export const Summary = () => {
+interface SummaryProps {
+  selectedCategory: Category | null;
+}
+export const Summary = ({selectedCategory}:SummaryProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const data: SummaryData = {
     leftOver: 0,
@@ -22,7 +27,12 @@ export const Summary = () => {
     return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
   return (
+
     <aside className="w-[320px] min-w-[320px] max-w-[500px] bg-[#f8f6f2] p-4 shadow-md border-l border-gray-200 overflow-y-auto">
+      {/*  Target Inspector*/}
+      {selectedCategory &&  selectedCategory !== null && (
+        <TargetInspector category={selectedCategory}/>
+      )}
       <section className="border-gray-200 bg-white flex rounded-lg shadow-sm text-black  flex-col ">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -92,6 +102,7 @@ export const Summary = () => {
           </div>
         )}
       </section>
+
     </aside>
   );
 };
