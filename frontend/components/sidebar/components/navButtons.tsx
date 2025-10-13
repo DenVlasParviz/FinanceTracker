@@ -4,7 +4,7 @@ type NavButton = {
   id: string;
   href: string;
   label: string;
-  iconId: string; // теперь указываем ID символа в icons.svg
+  iconId: string;
   active?: boolean;
 };
 
@@ -18,7 +18,7 @@ export const NavButtons = ({ isCollapsed }: NavButtonsProps) => {
       id: "budget",
       href: "/budget/202510",
       label: "Plan",
-      iconId: "money", // из /public/icons/icons.svg
+      iconId: "money", // from /public/icons/icons.svg
     },
     {
       id: "reports",

@@ -30,8 +30,8 @@ export const Summary = ({selectedCategory}:SummaryProps) => {
 
     <aside className="w-[320px] min-w-[320px] max-w-[500px] bg-[#f8f6f2] p-4 shadow-md border-l border-gray-200 overflow-y-auto">
       {/*  Target Inspector*/}
-      {selectedCategory &&  selectedCategory !== null && (
-        <TargetInspector category={selectedCategory}/>
+      {selectedCategory && !selectedCategory.isParent && (
+        <TargetInspector category={selectedCategory} />
       )}
       <section className="border-gray-200 bg-white flex rounded-lg shadow-sm text-black  flex-col ">
         <button

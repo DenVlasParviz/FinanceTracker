@@ -7,7 +7,7 @@ interface SubAccount {
 
 interface AccountProps {
   isCollapsed: boolean;
-  mainAmount: string; // для CASH
+  mainAmount: string;
   subAccounts?: SubAccount[];
 }
 

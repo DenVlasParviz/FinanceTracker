@@ -6,11 +6,13 @@ import { Sidebar } from "@/components/sidebar/sidebar";
 import { Summary } from "@/components/summaryPanel/summary";
 import { useState } from "react";
 import { Category } from "@/types/category";
+import { CategoriesProvider } from "@/components/context/categoriesContext";
 
 export default function Home() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   return (
+    <CategoriesProvider>
     <div className="flex h-screen">
       <Sidebar
         isCollapsed={isSidebarCollapsed}
@@ -31,5 +33,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </CategoriesProvider>
   );
 }

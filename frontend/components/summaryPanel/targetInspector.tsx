@@ -1,27 +1,31 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Category } from "@/types/category";
+import { Category, CategoryTarget } from "@/types/category";
 import {formatCurrency} from "@/components/common/format";
+import { addCategoryTarget, updateTarget } from "../api/api";
+import { useCategories } from "@/components/context/categoriesContext";
 
 interface TargetInspectorProps {
   category: Category;
 }
 
 
-interface TargetData {
-  targetAmount: number;
-  assignedSoFar: number;
-  targetType: string;
-  targetDate: string;
-}
 
 export const TargetInspector = ({ category }: TargetInspectorProps) => {
+  const { updateCategoryTarget, refreshCategories } = useCategories();
+
   const [isExpanded, setIsExpanded] = useState(true);
   const [isCreatingTarget, setIsCreatingTarget] = useState(false);
   const [targetAmount, setTargetAmount] = useState<number>(0);
+  const [targetType, setTargetType] = useState<string>("monthly");
 
 
-  const [targetData, setTargetData] = useState<TargetData | null>(null);
+
+  const targetData = category.targets && category.targets.length > 0
+    ? category.targets[0]
+    : null;
+
+
 
   const calculateProgress = () => {
     if (!targetData) return 0;
@@ -33,21 +37,40 @@ export const TargetInspector = ({ category }: TargetInspectorProps) => {
 
   const progress = calculateProgress();
   const isComplete = progress >= 100;
+
   useEffect(() => {
-    setTargetData(null);
     setIsCreatingTarget(false);
+    setTargetAmount(0);
+    setTargetType("monthly");
   }, [category.id]);
 
-  const handleSaveTarget = (amount: number, type: string) => {
-    setTargetData({
-      targetAmount: amount,
-      assignedSoFar: 0,
-      targetType: type,
-      targetDate: "By the End of the Month" // can be week day month add later
-    });
+  const handleSaveTarget = async () => {
+    try {
+      const tempTarget: CategoryTarget = {
+        id: crypto.randomUUID(),
+        categoryId: category.id,
+        targetAmount: targetAmount,
+        assignedSoFar: 0,
+        targetType: targetType,
+        targetDate: "2025-10-31", // change date later
+        isComplete: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      updateCategoryTarget(category.id, tempTarget);
+      setIsCreatingTarget(false);
+if(targetData){
+  await updateTarget(targetData.id,tempTarget);
+}
+else{
+  await addCategoryTarget(tempTarget)
 
-    setIsCreatingTarget(false);
-    // TODO: send to server data
+}
+
+    } catch (error) {
+      console.error("Failed to save target:", error);
+      await refreshCategories();
+    }
   };
   return (
     <section className="bg-white rounded-lg shadow-sm border border-gray-200 mt-4">
@@ -124,10 +147,8 @@ export const TargetInspector = ({ category }: TargetInspectorProps) => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
-                    const typeInput = document.getElementById("targetType") as HTMLSelectElement;
-                    handleSaveTarget(targetAmount || 0, "for money");
-                  }}
+                  onClick={handleSaveTarget}
+
                   className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   Save
@@ -195,7 +216,7 @@ export const TargetInspector = ({ category }: TargetInspectorProps) => {
                   </button>
                 )}
               </div>
-            {/*  Target Breakdown*/}
+            {/*  Target breakdown*/}
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Amount to Assign This Month</span>

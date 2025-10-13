@@ -35,7 +35,7 @@ export const BudgetTableRow = ({
   }, [category.name, category.assigned]);
 
   const startEdit = (field: typeof editingField) => {
-    if (field === "assigned" && !isChild) return; // <- allow assigned editing only for child
+    if (field === "assigned" && !isChild) return; // allow assigned editing only for child
     setEditingField(field);
   };
   const cancelEdit = () => {

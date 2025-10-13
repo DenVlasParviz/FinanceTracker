@@ -8,4 +8,18 @@ export interface Category {
   available: number;
   isParent?: boolean;
   parentId?: string;
+  targets: CategoryTarget[];
+}
+export interface CategoryTarget {
+  id: string;
+  categoryId: string;
+  targetAmount: number;
+  assignedSoFar: number;
+  targetType: string;
+  targetDate?: string | null;
+  weeklyDays?: string[];
+  monthlyDays?: number[];
+  isComplete: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

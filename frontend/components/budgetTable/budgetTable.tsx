@@ -1,57 +1,51 @@
 "use client";
 import { BudgetTableRow } from "@/components/budgetTable/budgetTableRow";
 import { Category } from "@/types/category";
-import { useEffect, useState } from "react";
-import { getCategoriesTable } from "@/components/api/api";
+import { useMemo, useState } from "react";
+import { useCategories } from "@/components/context/categoriesContext";
 
 interface BudgetTableProps {
   onSelectCategory?: (cat: Category) => void;
 }
-export default function BudgetTable({onSelectCategory}: BudgetTableProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
+
+export default function BudgetTable({ onSelectCategory }: BudgetTableProps) {
+  const { categories, isLoading } = useCategories();
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const cats: Category[] = await getCategoriesTable();
+  //  one time sort when something changes
+  const sortedCategories = useMemo(() => {
+    const parents = categories.filter(c => c.parentId === null);
+    const children = categories.filter(c => c.parentId !== null);
 
-        const parents = cats.filter(c => c.parentId === null);
-        const children = cats.filter(c => c.parentId !== null);
+    parents.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-        parents.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+    const sorted: Category[] = [];
 
-        const sorted: Category[] = [];
+    parents.forEach(parent => {
+      sorted.push(parent);
 
-        parents.forEach(parent => {
-          sorted.push(parent);
+      const parentChildren = children
+        .filter(child => child.parentId === parent.id)
+        .sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-          const parentChildren = children
-            .filter(child => child.parentId === parent.id)
-            .sort((a, b) => parseInt(a.id) - parseInt(b.id));
+      sorted.push(...parentChildren);
+    });
 
-          sorted.push(...parentChildren);
-        });
-
+    return sorted;
+  }, [categories]);
 
 
-        setCategories(sorted);
-        setExpandedIds(sorted.filter((c) => c.isParent).map((c) => c.id));
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, []);
+  useState(() => {
+    const parentIds = sortedCategories
+      .filter((c) => c.isParent)
+      .map((c) => c.id);
+    setExpandedIds(parentIds);
+  });
 
   const toggleCheckbox = (id: string) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === id ? { ...cat, checked: !cat.checked } : cat,
-      ),
-    );
-  };
 
+    console.log("Toggle checkbox for category:", id);
+  };
 
   const toggleCategory = (id: string) => {
     if (expandedIds.includes(id)) {
@@ -61,8 +55,12 @@ export default function BudgetTable({onSelectCategory}: BudgetTableProps) {
     }
   };
 
-  if (categories.length === 0) {
+  if (isLoading) {
     return <div className="p-4 text-gray-500">Loading...</div>;
+  }
+
+  if (sortedCategories.length === 0) {
+    return <div className="p-4 text-gray-500">No categories found</div>;
   }
 
   return (
@@ -81,7 +79,7 @@ export default function BudgetTable({onSelectCategory}: BudgetTableProps) {
       </div>
       {/* Rows */}
       <div>
-        {categories.map((category) => {
+        {sortedCategories.map((category) => {
           const isExpanded = expandedIds.includes(category.id);
           const shouldShow =
             category.isParent ||

@@ -5,7 +5,7 @@ import {db} from '../db'
 
 import { categoriesTable, categoryTargetsTable } from '../db/schema';
 import { UpdateCategoryDto } from './DTO/update-category.dto';
-import { CreateCategoryTargetDto } from './DTO/create-category.dto';
+import { CreateCategoryTargetDto } from './DTO/create-category-target-dto';
 
 @Injectable()
 export class CategoriesService {
@@ -57,7 +57,23 @@ const result = await db.insert(categoryTargetsTable).values({
   updatedAt: new Date(),
 
 }).returning();
-return result;
+return result[0];
+}
+
+async updateTarget(id:string,dto:CreateCategoryTargetDto){
+    const existing = await db.select().from(categoryTargetsTable).where(eq(categoryTargetsTable.id, id)).execute();
+  if (!existing.length) {
+    throw new NotFoundException('Target not found');
+  }
+  const result = await db.update(categoryTargetsTable).set({
+    targetAmount: dto.targetAmount ?? existing[0].targetAmount,
+    targetType: dto.targetType ?? existing[0].targetType,
+    targetDate: dto.targetDate ? new Date(dto.targetDate).toISOString() : existing[0].targetDate,
+    weeklyDays: dto.weeklyDays ?? existing[0].weeklyDays,
+    monthlyDays: dto.monthlyDays ?? existing[0].monthlyDays,
+    updatedAt: new Date(),
+  }).where(eq(categoryTargetsTable.id, id)).returning().execute();
+  return result[0];
 }
 
 }
