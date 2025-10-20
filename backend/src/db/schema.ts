@@ -35,3 +35,10 @@ export const categoryTargetsTable = pgTable("category_targets", {
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt").defaultNow(),
 });
+
+export const budgetTable = pgTable('budget', {
+  id: varchar('id', { length: 36 }).primaryKey(),
+  total: integer().notNull(),
+  assignedSum: integer().default(0),
+  updatedAt: timestamp().defaultNow(),
+});

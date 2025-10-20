@@ -20,27 +20,63 @@ export class CategoriesService {
   }
 
 async update(id:string, dto:UpdateCategoryDto) {
-  const category = await db
-    .select()
-    .from(categoriesTable)
-    .where(eq(categoriesTable.id, id))
-    .execute();
 
-  if (!category.length) {
-    throw new NotFoundException("Category not found");
-  }
+    const result = await db.transaction(async(tx)=>{
+      const category = await tx
+        .select()
+        .from(categoriesTable)
+        .where(eq(categoriesTable.id, id))
+        .execute();
+      if (!category.length) {
+        throw new NotFoundException("Category not found");
+      }
+const current = category[0]
 
-  const updated = await db
-    .update(categoriesTable)
-    .set({
-      name: dto.name ?? category[0].name,
-      assigned: dto.assigned ?? category[0].assigned,
+      const updatedChildRes = await tx.update(categoriesTable).set({
+        name: dto.name ?? current.name,
+        assigned: typeof dto.assigned === 'number' ? dto.assigned : current.assigned,
+      }).where(eq(categoriesTable.id, id)).returning().execute();
+
+      const updatedChild = updatedChildRes[0];
+      if (!updatedChild.isParent) {
+        await tx
+          .update(categoryTargetsTable)
+          .set({
+            assignedSoFar: updatedChild.assigned,
+          })
+          .where(eq(categoryTargetsTable.categoryId, updatedChild.id))
+          .execute();
+      }
+      const childTargets = await tx
+        .select()
+        .from(categoryTargetsTable)
+        .where(eq(categoryTargetsTable.categoryId, updatedChild.id))
+        .execute();
+      const updatedChildWithTargets = { ...updatedChild, targets: childTargets };
+
+
+      let updatedParent: typeof updatedChild | null = null;
+
+      if (current.parentId){
+        const children = await tx.select().from(categoriesTable).where(eq(categoriesTable.parentId, current.parentId)).execute();
+
+        const parentAssignedSum = children.reduce((a, b) => a + (b.assigned ?? 0), 0)
+
+        const parentUpdatedRes = await tx
+          .update(categoriesTable)
+          .set({ assigned: parentAssignedSum })
+          .where(eq(categoriesTable.id, current.parentId))
+          .returning()
+          .execute();
+
+        updatedParent = parentUpdatedRes[0];
+      }
+      return { updatedChild: updatedChildWithTargets, updatedParent };
     })
-    .where(eq(categoriesTable.id, id))
-    .returning()
-    .execute();
+return result;
 
-  return updated[0];
+
+
 }
 async addTarget(dto:CreateCategoryTargetDto) {
 const result = await db.insert(categoryTargetsTable).values({

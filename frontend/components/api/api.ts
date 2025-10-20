@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CategoryTarget } from "@/types/category";
+import { Category, CategoryTarget } from "@/types/category";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/categories",
@@ -22,41 +22,36 @@ export const getCategoriesTable = async () => {
 export const updateCategory = async (
   id: string,
   data: { name?: string; assigned?: number },
-) => {
+): Promise<{ updatedChild: Category; updatedParent?: Category | null }> => {
   const response = await api.patch(`/${id}`, data);
   return response.data;
 };
 
-export const getTargetsTable = async () => {
-
+export const getTargetsTable = async (): Promise<CategoryTarget[]> => {
   const response = await api.get("/targets");
+  return response.data;
+};
 
-}
-
-export const addCategoryTarget = async (data: CreateTargetDto): Promise<CategoryTarget> => {
+export const addCategoryTarget = async (
+  data: CreateTargetDto,
+): Promise<CategoryTarget> => {
   try {
-    const response = await api.post<CategoryTarget>(
-      `/target`,
-      data
-    );
+    const response = await api.post<CategoryTarget>(`/target`, data);
     return response.data;
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || 'Failed to create target';
+    const message = error.response?.data?.message || "Failed to create target";
     throw new Error(message);
   }
 };
-export const updateTarget = async ( id: string, data: CreateTargetDto,  ): Promise<CategoryTarget> => {
+export const updateTarget = async (
+  id: string,
+  data: CreateTargetDto,
+): Promise<CategoryTarget> => {
   try {
-    const response = await api.patch<CategoryTarget>(
-      `/target/${id}`,
-      data
-    );
+    const response = await api.patch<CategoryTarget>(`/target/${id}`, data);
     return response.data;
   } catch (error: any) {
-    const message =
-      error.response?.data?.message || 'Failed to create target';
+    const message = error.response?.data?.message || "Failed to create target";
     throw new Error(message);
   }
-}
-
+};

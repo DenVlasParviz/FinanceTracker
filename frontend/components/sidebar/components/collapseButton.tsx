@@ -15,7 +15,6 @@ export const CollapseButton = ({
         onClick={toggleCollapse}
         className="flex items-center justify-center w-10 h-10 rounded hover:bg-gray-700 transition-colors duration-150"
       >
-
         <span
           className={`transition-transform duration-300 ${
             isCollapsed ? "rotate-180" : ""

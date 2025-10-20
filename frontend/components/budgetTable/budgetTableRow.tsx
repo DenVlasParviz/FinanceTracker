@@ -2,14 +2,14 @@
 import { Category } from "@/types/category";
 import React, { useEffect, useState } from "react";
 import { updateCategory } from "@/components/api/api";
+import { useCategories } from "@/components/context/categoriesContext";
 
 export const BudgetTableRow = ({
   category,
   isExpanded,
   onToggleExpand,
   onToggleCheck,
-                                 onSelectCategory
-
+  onSelectCategory,
 }: {
   category: Category;
   isExpanded?: boolean;
@@ -24,6 +24,13 @@ export const BudgetTableRow = ({
   const [editingField, setEditingField] = useState<null | "name" | "assigned">(
     null,
   );
+
+  const {
+    applyLocalCategoryAssigned,
+    applyServerCategoryUpdate,
+    refreshCategories,
+  } = useCategories();
+
   const [draftName, setDraftName] = useState<string>(category.name);
   const [draftAssigned, setDraftAssigned] = useState<string>(
     category.assigned?.toFixed(2) ?? "0.00",
@@ -47,6 +54,7 @@ export const BudgetTableRow = ({
     name?: string;
     assigned?: number;
   }; // TODO move to other script
+
   const saveEdit = async () => {
     console.log("Save:", {
       name: draftName,
@@ -56,8 +64,20 @@ export const BudgetTableRow = ({
     if (editingField === "name") payload.name = draftName;
     if (editingField === "assigned")
       payload.assigned = parseFloat(draftAssigned);
-    await updateCategory(category.id, payload);
-    setEditingField(null);
+    const isAssignEdit = editingField === "assigned" && isChild;
+    try{
+      if(isAssignEdit){
+        applyLocalCategoryAssigned(category.id,payload.assigned!);
+      }
+      const res = await updateCategory(category.id, payload);
+      applyServerCategoryUpdate(res);
+      setEditingField(null);
+    }catch(err){
+      console.error("Failed to save:", err);
+      await refreshCategories();
+      setEditingField(null);
+    }
+
   };
   const handleKeyDown = (
     e: React.KeyboardEvent,
@@ -79,7 +99,7 @@ export const BudgetTableRow = ({
       style={{ minHeight: "44px" }}
       role="row"
       aria-level={category.level}
-      onClick={()=> onSelectCategory?.(category)}
+      onClick={() => onSelectCategory?.(category)}
     >
       {/*Collapse button*/}
       <div className="w-6 mr-2 ">

@@ -14,18 +14,18 @@ export default function BudgetTable({ onSelectCategory }: BudgetTableProps) {
 
   //  one time sort when something changes
   const sortedCategories = useMemo(() => {
-    const parents = categories.filter(c => c.parentId === null);
-    const children = categories.filter(c => c.parentId !== null);
+    const parents = categories.filter((c) => c.parentId === null);
+    const children = categories.filter((c) => c.parentId !== null);
 
     parents.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
     const sorted: Category[] = [];
 
-    parents.forEach(parent => {
+    parents.forEach((parent) => {
       sorted.push(parent);
 
       const parentChildren = children
-        .filter(child => child.parentId === parent.id)
+        .filter((child) => child.parentId === parent.id)
         .sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
       sorted.push(...parentChildren);
@@ -33,7 +33,6 @@ export default function BudgetTable({ onSelectCategory }: BudgetTableProps) {
 
     return sorted;
   }, [categories]);
-
 
   useState(() => {
     const parentIds = sortedCategories
@@ -43,7 +42,6 @@ export default function BudgetTable({ onSelectCategory }: BudgetTableProps) {
   });
 
   const toggleCheckbox = (id: string) => {
-
     console.log("Toggle checkbox for category:", id);
   };
 
