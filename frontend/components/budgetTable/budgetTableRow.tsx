@@ -3,6 +3,8 @@ import { Category } from "@/types/category";
 import React, { useEffect, useState } from "react";
 import { updateCategory } from "@/components/api/api";
 import { useCategories } from "@/components/context/categoriesContext";
+import {useBudget} from "@/components/context/budgetContext";
+
 
 export const BudgetTableRow = ({
   category,
@@ -24,6 +26,8 @@ export const BudgetTableRow = ({
   const [editingField, setEditingField] = useState<null | "name" | "assigned">(
     null,
   );
+
+const {refreshBudget} = useBudget();
 
   const {
     applyLocalCategoryAssigned,
@@ -71,6 +75,7 @@ export const BudgetTableRow = ({
       }
       const res = await updateCategory(category.id, payload);
       applyServerCategoryUpdate(res);
+      await refreshBudget()
       setEditingField(null);
     }catch(err){
       console.error("Failed to save:", err);

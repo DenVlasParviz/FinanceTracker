@@ -55,3 +55,12 @@ export const updateTarget = async (
     throw new Error(message);
   }
 };
+
+export const getBudget = async() => {
+  const response = await api.get("http://localhost:3000/budget") // TODO: rewrite api call for a different tables
+  return response.data;
+}
+
+export const updateBudget = async ()=>{
+  const response = await api.patch('http://localhost:3000/budget')
+}
