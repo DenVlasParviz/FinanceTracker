@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
-import {getBudget} from "@/components/api/api";
+import { getBudget, updateBudget } from "@/components/api/api";
 
 export type BudgetDto = {
   id: string;
@@ -30,6 +30,7 @@ export function BudgetProvider({children}:{children:ReactNode}){
     setLoading(true);
     setError(null);
     try {
+      await updateBudget();
       const data = await getBudget();
       const normalized: BudgetDto = {
         id: data.id,

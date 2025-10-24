@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Category } from "@/types/category";
 import { CategoriesProvider } from "@/components/context/categoriesContext";
 import { BudgetProvider } from "@/components/context/budgetContext";
+import { CategoryButtons } from "@/components/contentArea/categoryButtons";
 
 export default function Home() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -32,6 +33,8 @@ export default function Home() {
           <FilterButtons />
           <div className="flex flex-1">
             <div className="flex-1 overflow-y-auto transition-all duration-300">
+              <CategoryButtons />
+
               <BudgetTable onSelectCategory={setSelectedCategory} />
             </div>
             <Summary selectedCategory={selectedCategory} />
