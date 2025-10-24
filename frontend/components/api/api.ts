@@ -15,6 +15,9 @@ export interface CreateTargetDto {
   monthlyDays?: number[];
 }
 
+
+//TODO: Move dtos to other folder
+
 export const getCategoriesTable = async () => {
   const response = await api.get("/");
   return response.data;
@@ -63,4 +66,10 @@ export const getBudget = async() => {
 
 export const updateBudget = async ()=>{
   const response = await api.patch('http://localhost:3000/budget')
+}
+
+// Add new category
+
+export const createCategory = async(name: string)=>{
+  await api.post('/',{name})
 }

@@ -6,6 +6,8 @@ import {db} from '../db'
 import { categoriesTable, categoryTargetsTable } from '../db/schema';
 import { UpdateCategoryDto } from './DTO/update-category.dto';
 import { CreateCategoryTargetDto } from './DTO/create-category-target-dto';
+import { CreateCategoryDto } from './DTO/budget/create-category.dto';
+import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class CategoriesService {
@@ -17,6 +19,21 @@ export class CategoriesService {
       ...cat,
       targets: targets.filter(t => t.categoryId === cat.id)
     }));
+  }
+
+
+  async createCategory(dto:CreateCategoryDto) {
+    await db.insert(categoriesTable).values({
+      id: crypto.randomUUID(),
+      name: dto.name,
+      checked: false,
+      level: 1,
+      assigned: 0,
+      activity: 0,
+      available: 0,
+      isParent: true,
+      parentId: null,
+    });
   }
 
 async update(id:string, dto:UpdateCategoryDto) {

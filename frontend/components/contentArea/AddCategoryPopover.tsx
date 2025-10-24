@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { createCategory } from "@/components/api/api";
 type Props = {
   onCreate?:(name:string) => Promise<void> | void;
   buttonClassName?: string;
@@ -49,6 +50,8 @@ export const AddCategoryPopover: React.FC<Props> = ({ onCreate, buttonClassName 
       inputRef.current?.focus();
       return;
     }
+    await createCategory(value.trim());
+
     if (onCreate) await onCreate(value.trim());
     setValue("");
     setOpen(false);
@@ -85,8 +88,6 @@ export const AddCategoryPopover: React.FC<Props> = ({ onCreate, buttonClassName 
           style={{
             position: "absolute",
 
-            // небольшая коррекция если уходит за правый край
-            maxWidth: "calc(100vw - 20px)",
           }}
         >
           <div className="p-3">
@@ -97,7 +98,7 @@ export const AddCategoryPopover: React.FC<Props> = ({ onCreate, buttonClassName 
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="New Category Group"
-              className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-lime-300"
+              className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 text-black focus:ring-lime-300"
             />
           </div>
 
@@ -105,7 +106,7 @@ export const AddCategoryPopover: React.FC<Props> = ({ onCreate, buttonClassName 
             <button
               type="button"
               onClick={handleCancel}
-              className="px-3 py-1.5 rounded-md bg-gray-50 hover:bg-gray-100 text-sm"
+              className="px-3 py-1.5 rounded-md bg-green-700 hover:bg-green-900 text-sm"
             >
               Cancel
             </button>

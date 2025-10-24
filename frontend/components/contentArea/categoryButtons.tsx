@@ -37,7 +37,7 @@ export const CategoryButtons = () => {
 
       {/* Recent Moves */}
       <div className="flex items-center">
-        <button className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-lime-700 border border-transparent hover:border-lime-400 px-3 py-1.5 rounded-lg transition">
+        <button className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-lime-700 border border-transparent hover:border-lime-400 px-3 py-1.5 rounded-lg transition">
           {/* clock svg */}
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 3.5a.5.5 0 0 1 .5.5v4l3 1.5a.5.5 0 1 1-.5.866L8 8.5V4a.5.5 0 0 1 .5-.5z" />
