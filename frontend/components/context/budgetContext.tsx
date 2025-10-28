@@ -27,7 +27,6 @@ export function BudgetProvider({children}:{children:ReactNode}){
 
 
   const refreshBudget = useCallback(async () => {
-    setLoading(true);
     setError(null);
     try {
       await updateBudget();
@@ -44,14 +43,12 @@ export function BudgetProvider({children}:{children:ReactNode}){
       setBudget(normalized);
     } catch (err) {
       setError(err as Error);
-    } finally {
-      setLoading(false);
     }
   }, []);
   const setBudgetLocally = useCallback((b: BudgetDto | null) => {
     setBudget(b);
   }, []);
-
+//TODO: Remove loading
   return(
     <BudgetContext.Provider value={{ budget, loading, error, refreshBudget, setBudgetLocally }}>
       {children}

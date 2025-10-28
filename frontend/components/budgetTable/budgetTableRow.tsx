@@ -6,7 +6,7 @@ import { useCategories } from "@/components/context/categoriesContext";
 import {useBudget} from "@/components/context/budgetContext";
 import { AddCategoryPopover } from "@/components/contentArea/AddCategoryPopover";
 
-
+// TODO: рішити проблему коли жмеш на assigned та жмеш у вільне місце пост гет запроси відправляються
 export const BudgetTableRow = ({
   category,
   isExpanded,
@@ -192,7 +192,7 @@ const {refreshBudget} = useBudget();
             type="text"
             value={draftAssigned}
             onChange={(e) => setDraftAssigned(e.target.value)}
-            onBlur={saveEdit}
+            onBlur={cancelEdit}
             onKeyDown={(e) => handleKeyDown(e, "assigned")}
             autoFocus
             className="w-full px-2 py-1 text-sm border text-black border-blue-500 rounded text-right font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"

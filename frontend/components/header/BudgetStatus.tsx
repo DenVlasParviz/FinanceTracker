@@ -5,13 +5,12 @@ import { useBudget } from "@/components/context/budgetContext";
 
 export const BudgetStatus = () => {
 
-  const { budget, loading, error, refreshBudget } = useBudget();
+  const { budget , error, refreshBudget } = useBudget();
 
   useEffect(() => {
     refreshBudget();
 
   },[refreshBudget]);
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
   return (
