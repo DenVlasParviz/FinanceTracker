@@ -9,7 +9,7 @@ interface BudgetTableProps {
 }
 
 export default function BudgetTable({ onSelectCategory }: BudgetTableProps) {
-  const { categories, isLoading } = useCategories();
+  const { categories,  } = useCategories();
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
   //  one time sort when something changes
@@ -53,9 +53,7 @@ export default function BudgetTable({ onSelectCategory }: BudgetTableProps) {
     }
   };
 
-  if (isLoading) {
-    return <div className="p-4 text-gray-500">Loading...</div>;
-  }
+
 
   if (sortedCategories.length === 0) {
     return <div className="p-4 text-gray-500">No categories found</div>;

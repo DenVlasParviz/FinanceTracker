@@ -57,16 +57,15 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (opts?: { background?: boolean }) => {
     try {
-      setIsLoading(true);
+      const background = !!opts?.background;
+
       const data = await getCategoriesTable();
       setCategories(data);
       setError(null);
     } catch (err) {
       setError(err as Error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
