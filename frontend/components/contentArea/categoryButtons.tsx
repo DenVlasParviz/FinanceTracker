@@ -2,8 +2,30 @@
 "use client";
 import React from "react";
 import { AddCategoryPopover } from "./AddCategoryPopover";
+import { createCategory } from "@/components/api/api";
+import { useCategories } from "@/components/context/categoriesContext";
+
+
 
 export const CategoryButtons = () => {
+
+  const {
+
+    addCategoryLocally,
+    refreshCategories,
+  } = useCategories();
+
+  const handleCreatedChild = async (name: string) => {
+    try{
+      const created= await createCategory(name);
+      if(!("targets" in created)) (created as any).targets = [];
+      addCategoryLocally(created)
+      await refreshCategories()
+    }catch(e){
+      console.log("created child failed",e);
+    }
+  }
+
   const buttonClass =
     "flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-lime-700 transition-colors border border-transparent hover:border-lime-400 px-3 py-1.5 rounded-lg";
 
@@ -11,7 +33,7 @@ export const CategoryButtons = () => {
     <div className="flex items-center justify-between bg-white border-b border-gray-200 px-4 py-2 rounded-t-xl shadow-sm">
       {/* Add Category Group (popover) */}
       <div className="flex items-center">
-        <AddCategoryPopover buttonClassName={buttonClass} />
+        <AddCategoryPopover buttonClassName={buttonClass}  onCreate={handleCreatedChild}/>
       </div>
 
       {/* Undo / Redo */}

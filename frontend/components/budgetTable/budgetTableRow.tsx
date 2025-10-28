@@ -1,9 +1,10 @@
 "use client";
 import { Category } from "@/types/category";
 import React, { useEffect, useState } from "react";
-import { updateCategory } from "@/components/api/api";
+import { createCategory, updateCategory } from "@/components/api/api";
 import { useCategories } from "@/components/context/categoriesContext";
 import {useBudget} from "@/components/context/budgetContext";
+import { AddCategoryPopover } from "@/components/contentArea/AddCategoryPopover";
 
 
 export const BudgetTableRow = ({
@@ -27,11 +28,13 @@ export const BudgetTableRow = ({
     null,
   );
 
+
 const {refreshBudget} = useBudget();
 
   const {
     applyLocalCategoryAssigned,
     applyServerCategoryUpdate,
+    addCategoryLocally,
     refreshCategories,
   } = useCategories();
 
@@ -39,6 +42,19 @@ const {refreshBudget} = useBudget();
   const [draftAssigned, setDraftAssigned] = useState<string>(
     category.assigned?.toFixed(2) ?? "0.00",
   );
+
+
+  const handleCreatedChild = async (name: string) => {
+    try{
+      const created= await createCategory(name,category.id);
+      if(!("targets" in created)) (created as any).targets = [];
+      addCategoryLocally(created)
+      await refreshBudget()
+    }catch(e){
+      console.log("created child failed",e);
+    }
+  }
+
 
   useEffect(() => {
     setDraftName(category.name);
@@ -155,12 +171,18 @@ const {refreshBudget} = useBudget();
           </button>
         )}
         {isParent && (
-          <button
-            className="flex-shrink-0 text-blue-500 hover:text-blue-600 text-lg"
-            aria-label="Add Category"
-          >
-            <span>+</span>
-          </button>
+          <div className="flex-shrink-0">
+            <AddCategoryPopover
+              buttonClassName="inline-flex items-center justify-center w-8 h-8 p-0 rounded hover:bg-gray-100"
+              buttonChildren={
+                <svg className="w-4 h-4 text-blue-500" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+                  <path d="M8 1a.75.75 0 0 1 .75.75V7h5.25a.75.75 0 0 1 0 1.5H8.75v5.25a.75.75 0 0 1-1.5 0V8.5H2a.75.75 0 0 1 0-1.5h5.25V1.75A.75.75 0 0 1 8 1z"/>
+                </svg>
+              }
+              onCreate={handleCreatedChild}
+              panelWidth={280}
+            />
+          </div>
         )}
       </div>
       {/*    Assigned*/}

@@ -7,7 +7,6 @@ import { categoriesTable, categoryTargetsTable } from '../db/schema';
 import { UpdateCategoryDto } from './DTO/update-category.dto';
 import { CreateCategoryTargetDto } from './DTO/create-category-target-dto';
 import { CreateCategoryDto } from './DTO/budget/create-category.dto';
-import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class CategoriesService {
@@ -23,17 +22,40 @@ export class CategoriesService {
 
 
   async createCategory(dto:CreateCategoryDto) {
-    await db.insert(categoriesTable).values({
-      id: crypto.randomUUID(),
+    const id = crypto.randomUUID();
+    let isParent = true;
+    let level = 1;
+    let parentId: string | null = null;
+
+    if (dto.parentId) {
+      parentId = dto.parentId;
+      isParent = false;
+      const parent = await db.select().from(categoriesTable).where(eq(categoriesTable.id, dto.parentId));
+      level = (parent?.[0]?.level ?? 1) + 1;
+    }
+    const res = await db.insert(categoriesTable).values({
+      id,
       name: dto.name,
       checked: false,
-      level: 1,
+      level,
       assigned: 0,
       activity: 0,
       available: 0,
-      isParent: true,
-      parentId: null,
+      isParent,
+      parentId,
+    }).returning({
+      id: categoriesTable.id,
+      name: categoriesTable.name,
+      checked: categoriesTable.checked,
+      level: categoriesTable.level,
+      assigned: categoriesTable.assigned,
+      activity: categoriesTable.activity,
+      available: categoriesTable.available,
+      isParent: categoriesTable.isParent,
+      parentId: categoriesTable.parentId,
     });
+
+    return res[0];
   }
 
 async update(id:string, dto:UpdateCategoryDto) {

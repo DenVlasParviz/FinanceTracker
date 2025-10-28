@@ -20,6 +20,7 @@ interface CategoriesContextType {
     updatedChild: Category;
     updatedParent?: Category | null;
   }) => void;
+  addCategoryLocally: (category: Category) => void;
 }
 
 const CategoriesContext = createContext<CategoriesContextType | undefined>(
@@ -44,11 +45,11 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
       const oldChild = map.get(payload.updatedChild.id);
       const childTargets = (payload.updatedChild as any).targets ?? oldChild?.targets ?? [];
       const mergedChild = { ...payload.updatedChild, targets: childTargets };
-      map.set(mergedChild.id, mergedChild); // <-----
+      map.set(mergedChild.id, mergedChild);
 
       if (payload.updatedParent) {
         const oldParent = map.get(payload.updatedParent.id);
-        const mergedParent = { ...payload.updatedParent, targets: oldParent?.targets ?? [] }; // (на случай, если UI ожидает поле)
+        const mergedParent = { ...payload.updatedParent, targets: oldParent?.targets ?? [] };
         map.set(payload.updatedParent.id, mergedParent);
       }
 
@@ -80,6 +81,11 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
       ),
     );
   };
+  const addCategoryLocally = (category:Category) => {
+    setCategories((prev) =>{
+      return [category,...prev]
+    });
+  }
 
   return (
     <CategoriesContext.Provider
@@ -91,6 +97,7 @@ export function CategoriesProvider({ children }: { children: ReactNode }) {
         updateCategoryTarget,
         applyLocalCategoryAssigned,
         applyServerCategoryUpdate,
+        addCategoryLocally,
       }}
     >
       {children}

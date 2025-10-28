@@ -6,6 +6,7 @@ const api = axios.create({
   timeout: 5000,
 });
 
+
 export interface CreateTargetDto {
   categoryId: string;
   targetAmount: number;
@@ -70,6 +71,7 @@ export const updateBudget = async ()=>{
 
 // Add new category
 
-export const createCategory = async(name: string)=>{
-  await api.post('/',{name})
+export const createCategory = async(name: string, parentId?:string) :Promise<Category> =>{
+  const response = await api.post("/", { name,parentId });
+  return response.data as Category;
 }
