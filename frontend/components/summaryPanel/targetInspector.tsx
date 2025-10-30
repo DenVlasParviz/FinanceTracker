@@ -44,24 +44,27 @@ export const TargetInspector = ({ category }: TargetInspectorProps) => {
 
   const handleSaveTarget = async () => {
     try {
-      const tempTarget: CategoryTarget = {
-        id: crypto.randomUUID(),
+      const payload = { // payload але це по суті tempTarget так що переробити його в майбутнюому
         categoryId: category.id,
         targetAmount: targetAmount,
-        assignedSoFar: 0,
         targetType: targetType,
-        targetDate: "2025-10-31", // change date later
-        isComplete: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        targetDate: "2025-10-31", // todo: змінити на вибір дати самостійно
       };
-      updateCategoryTarget(category.id, tempTarget);
-      setIsCreatingTarget(false);
+
+      let savedTarget: CategoryTarget;
+
       if (targetData) {
-        await updateTarget(targetData.id, tempTarget);
+
+        savedTarget = await updateTarget(targetData.id, payload);
       } else {
-        await addCategoryTarget(tempTarget);
+
+        savedTarget = await addCategoryTarget(payload);
       }
+
+
+      updateCategoryTarget(category.id, savedTarget);
+      setIsCreatingTarget(false);
+
     } catch (error) {
       console.error("Failed to save target:", error);
       await refreshCategories();

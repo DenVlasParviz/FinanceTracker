@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Category } from "@/types/category";
 import { TargetInspector } from "@/components/summaryPanel/targetInspector";
+import { useCategories } from "@/components/context/categoriesContext";
 
 interface SummaryData {
   leftOver: number;
@@ -12,9 +13,10 @@ interface SummaryData {
 }
 
 interface SummaryProps {
-  selectedCategory: Category | null;
+  selectedCategoryId: string | null;
 }
-export const Summary = ({ selectedCategory }: SummaryProps) => {
+export const Summary = ({ selectedCategoryId  }: SummaryProps) => {
+  const { categories } = useCategories();
   const [isExpanded, setIsExpanded] = useState(true);
   const data: SummaryData = {
     leftOver: 0,
@@ -26,6 +28,9 @@ export const Summary = ({ selectedCategory }: SummaryProps) => {
   const formatCurrency = (amount: number) => {
     return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
+  const selectedCategory = selectedCategoryId
+    ? categories.find(c => c.id === selectedCategoryId)
+    : null;
   return (
     <aside className="w-[320px] min-w-[320px] max-w-[500px] bg-[#f8f6f2] p-4 shadow-md border-l border-gray-200 overflow-y-auto">
       {/*  Target Inspector*/}

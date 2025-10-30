@@ -9,7 +9,7 @@ interface BudgetTableProps {
 }
 
 export default function BudgetTable({ onSelectCategory }: BudgetTableProps) {
-  const { categories,  } = useCategories();
+  const { categories } = useCategories();
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
   //  one time sort when something changes

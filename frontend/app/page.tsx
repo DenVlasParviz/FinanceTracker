@@ -12,9 +12,7 @@ import { CategoryButtons } from "@/components/contentArea/categoryButtons";
 
 export default function Home() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   return (
     <BudgetProvider>
 
@@ -35,9 +33,9 @@ export default function Home() {
             <div className="flex-1 overflow-y-auto transition-all duration-300">
               <CategoryButtons />
 
-              <BudgetTable onSelectCategory={setSelectedCategory} />
+              <BudgetTable onSelectCategory={(cat) => setSelectedCategoryId(cat.id)} />
             </div>
-            <Summary selectedCategory={selectedCategory} />
+            <Summary selectedCategoryId={selectedCategoryId}  />
           </div>
         </div>
       </div>
