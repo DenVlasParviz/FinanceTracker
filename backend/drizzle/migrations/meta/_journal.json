@@ -2,32 +2,12 @@
   "version": "7",
   "dialect": "postgresql",
   "entries": [
+
     {
-      "idx": 0,
+      "idx": 4,
       "version": "7",
-      "when": 1759922596013,
-      "tag": "0000_chemical_rawhide_kid",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1759926514171,
-      "tag": "0001_little_moondragon",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1760108018102,
-      "tag": "0002_blushing_warstar",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1760367787018,
-      "tag": "0003_unknown_ender_wiggin",
+      "when": 1762353730810,
+      "tag": "0004_add_accounts_table",
       "breakpoints": true
     }
   ]

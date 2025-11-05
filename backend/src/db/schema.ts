@@ -42,3 +42,11 @@ export const budgetTable = pgTable('budget', {
   assignedSum: integer().default(0),
   updatedAt: timestamp().defaultNow(),
 });
+
+export const accountsTable = pgTable('accounts', {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  name: text("name").notNull(),
+  balance: integer("balance").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+})

@@ -75,3 +75,18 @@ export const createCategory = async(name: string, parentId?:string) :Promise<Cat
   const response = await api.post("/", { name,parentId });
   return response.data as Category;
 }
+
+// get existing accounts
+export const getAccounts = async () => {
+  const res = await api.get("http://localhost:3000/accounts");
+  return res.data;
+};
+export const createAccount = async (data: { name: string; balance?: number }) => {
+  const res = await api.post("http://localhost:3000/accounts", data);
+  return res.data;
+};
+export const updateAccount = async (id: string, data: { name?: string; balance?: number }) => {
+  const res = await api.patch(`http://localhost:3000/accounts/${id}`, data);
+  return res.data;
+};
+
